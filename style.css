@@ -1,0 +1,1656 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f7ff 0%, #d6e8ff 40%, #c2d9ff 70%, #e6f2ff 100%);
+    color: #1e3a5f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+}
+
+/* Лёгкий акварельный эффект */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(80, 160, 255, 0.25) 0%, transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(120, 190, 255, 0.20) 0%, transparent 50%),
+        radial-gradient(circle at 35% 75%, rgba(160, 210, 255, 0.18) 0%, transparent 40%);
+    filter: blur(70px);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+header {
+    background: rgba(240, 248, 255, 0.97);
+    padding: 1.1rem 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid #81b9ff;
+    box-shadow: 0 4px 20px rgba(100, 170, 255, 0.15);
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #1e4a8c, #4a9be0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center; /* <-- Добавь эту строку */
+    width: 100%;        /* <-- Желательно добавить, чтобы центрирование работало корректно */
+}
+
+nav a {
+    color: #1e3a5f;
+    text-decoration: none;
+    margin-left: 2.3rem;
+    font-weight: 500;
+    font-size: 1.05rem;
+}
+
+nav a:hover {
+    color: #2b7bc9;
+    text-decoration: underline;
+}
+
+main {
+    flex: 1;
+    padding: 20px 5% 40px;
+    display: block;           /* ← важно */
+    position: relative;
+}
+
+.map-container {
+    width: 100%;
+    max-width: 1100px;
+    height: auto;
+    position: relative;
+    background: white;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.18);
+}
+
+.metro-map {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.stations-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: calc(100% - 24px);
+    pointer-events: auto;
+    z-index: 2;
+}
+
+/* ====================== СТАНЦИИ ====================== */
+.station-point {
+    cursor: pointer;
+    fill: #e74c3c;
+    stroke: #1e3a5f;
+    stroke-width: 6.5;
+    transition: fill 0.3s ease, transform 0.25s ease, stroke 0.3s ease;
+    transform-origin: center center;
+    transform-box: fill-box;
+}
+
+.station-point:hover {
+    fill: #ffffff;
+    stroke: #2b7bc9;
+    stroke-width: 9;
+    transform: scale(1.16);
+}
+
+/* ====================== ИСТОРИЧЕСКИЕ СЛОИ ====================== */
+.history-controls {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 20;
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 5px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(100, 170, 255, 0.25);
+    border: 1px solid rgba(100, 180, 255, 0.3);
+}
+
+.history-btn {
+    padding: 9px 17px;
+    border: none;
+    background: transparent;
+    color: #1e3a5f;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.history-btn:hover {
+    background: #e6f0ff;
+}
+
+.history-btn.active {
+    background: #2b7bc9;
+    color: white;
+}
+
+/* Старые станции — светло-серые */
+.station-point.old {
+    fill: #c8d0d8 !important;
+    stroke: #8a9aa8 !important;
+    stroke-width: 5;
+}
+
+/* ====================== ЛЕГЕНДА ЛИНИЙ ====================== */
+.lines-legend {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 25;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 6px 20px rgba(100, 170, 255, 0.22);
+    border: 1px solid rgba(100, 180, 255, 0.25);
+    max-width: 260px;
+}
+
+.legend-title {
+    font-weight: 700;
+    color: #1e4a8c;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.legend-item:hover {
+    background: rgba(230, 240, 255, 0.6);
+}
+
+.color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Подсветка линий (яркие цвета) */
+.station-point.highlight-line1 { fill: #ff4757 !important; stroke: #c0392b !important; stroke-width: 10; }
+.station-point.highlight-line2 { fill: #5dade2 !important; stroke: #2874a6 !important; stroke-width: 9; }
+.station-point.highlight-line3 { fill: #58d68d !important; stroke: #1e8449 !important; stroke-width: 9; }
+.station-point.highlight-line4 { fill: #ff9f1c !important; stroke: #e67e22 !important; stroke-width: 10; }
+.station-point.highlight-line5 { fill: #bb8fce !important; stroke: #6c3483 !important; stroke-width: 9; }
+.station-point.highlight-line6 { fill: #ff9f43 !important; stroke: #d35400 !important; stroke-width: 9; }
+
+/* ====================== TIMELINE ====================== */
+.timeline-section {
+    padding: 60px 5% 70px;
+    background: rgba(240, 248, 255, 0.65);
+    text-align: center;
+}
+
+.timeline-section h2 {
+    font-size: 2.2rem;
+    color: #1e4a8c;
+    margin-bottom: 10px;
+}
+
+.timeline-subtitle {
+    font-size: 1.15rem;
+    color: #2b7bc9;
+    max-width: 720px;
+    margin: 0 auto 45px;
+}
+
+.timeline {
+    position: relative;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 40px 20px 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 58px;
+    left: 40px;
+    right: 40px;
+    height: 7px;
+    background: linear-gradient(to right, #81b9ff, #4a9be0);
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.timeline-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-item {
+    flex: 1;
+    max-width: 155px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.timeline-item:hover {
+    transform: translateY(-6px);
+}
+
+.timeline-dot {
+    width: 26px;
+    height: 26px;
+    background: #ffffff;
+    border: 5px solid #2b7bc9;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    box-shadow: 0 4px 12px rgba(43, 123, 201, 0.35);
+    position: relative;
+    z-index: 3;
+}
+
+.timeline-content {
+    background: white;
+    padding: 18px 16px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(100, 170, 255, 0.18);
+    text-align: left;
+    min-height: 195px;
+}
+
+.timeline-content .year {
+    display: block;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1e4a8c;
+    margin-bottom: 8px;
+}
+
+.timeline-content h3 {
+    font-size: 1.15rem;
+    margin: 0 0 10px 0;
+    color: #1e3a5f;
+    line-height: 1.3;
+}
+
+.timeline-content p {
+    font-size: 0.96rem;
+    line-height: 1.45;
+    color: #334c70;
+}
+
+/* ====================== FOOTER ====================== */
+footer {
+    padding: 1.5rem 5%;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #1e3a5f;
+    background: rgba(240, 248, 255, 0.97);
+    border-top: 2px solid #81b9ff;
+}
+
+@media (max-width: 768px) {
+    .map-container, .metro-map, .stations-overlay {
+        max-height: calc(100vh - 125px);
+    }
+    
+    nav a {
+        margin-left: 1.2rem;
+        font-size: 0.95rem;
+    }
+    
+    .lines-legend {
+        max-width: 220px;
+        padding: 10px 12px;
+    }
+}
+
+/* ====================== СЧЁТЧИК РАЗВИТИЯ (над картой) ====================== */
+.station-counter {
+    margin: 0 auto 20px;
+    max-width: 1100px;
+    background: rgba(255, 255, 255, 0.97);
+    padding: 14px 32px;
+    border-radius: 50px;
+    box-shadow: 0 8px 25px rgba(100, 170, 255, 0.25);
+    border: 2px solid #81b9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    color: #1e3a5f;
+    z-index: 10;
+}
+
+.counter-year {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #2b7bc9;
+    min-width: 62px;
+    text-align: center;
+}
+
+.counter-number {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #1e4a8c;
+    min-width: 55px;
+    text-align: center;
+    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.counter-label {
+    font-weight: 500;
+    color: #334c70;
+}
+
+/* ====================== ТУЛТИП (подсказка при наведении) ====================== */
+.station-tooltip {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.98);
+    color: #1e3a5f;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(100, 170, 255, 0.3);
+    border: 1px solid #a0c8ff;
+    pointer-events: none;
+    z-index: 10000;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    transform: translate(-50%, -130%);
+    display: none;
+}
+
+.station-tooltip.show {
+    opacity: 1;
+    display: block;
+}
+
+/* ====================== ИНФО-ПАНЕЛЬ О СТАНЦИИ ====================== */
+.station-info-panel {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.22);
+    padding: 35px 40px;
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+.station-info-panel.hidden {
+    display: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 32px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #e74c3c;
+}
+
+#station-title {
+    font-size: 2.2rem;
+    color: #1e4a8c;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #81b9ff;
+}
+
+.station-description {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: #334c70;
+    margin-bottom: 35px;
+}
+
+.station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.station-photos img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.station-photos img:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .station-info-panel {
+        padding: 25px 20px;
+    }
+    .station-photos {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ====================== ИНФО-ПАНЕЛЬ ====================== */
+.station-info-panel {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.22);
+    padding: 35px 40px;
+    position: relative;
+    clear: both;           /* важно */
+}
+
+.station-info-panel.hidden {
+    display: none !important;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 32px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #e74c3c;
+}
+
+#station-title {
+    font-size: 2.2rem;
+    color: #1e4a8c;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #81b9ff;
+}
+
+.station-description {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: #334c70;
+    margin-bottom: 35px;
+}
+
+.station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.station-photos img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.station-info-panel {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.25);
+    padding: 35px 40px;
+    position: relative;
+}
+
+.station-info-panel.hidden { display: none !important; }
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 34px;
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-btn:hover { color: #e74c3c; }
+
+#station-title {
+    font-size: 2.3rem;
+    color: #1e4a8c;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #81b9ff;
+    padding-bottom: 15px;
+}
+
+.station-description {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: #334c70;
+    margin-bottom: 30px;
+}
+
+.station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.station-photos img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.station-info-panel {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.25);
+    padding: 35px 40px;
+    position: relative;
+}
+
+.station-info-panel.hidden { display: none !important; }
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 34px;
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-btn:hover { color: #e74c3c; }
+
+#station-title {
+    font-size: 2.3rem;
+    color: #1e4a8c;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #81b9ff;
+    padding-bottom: 15px;
+}
+
+.station-description {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: #334c70;
+    margin-bottom: 30px;
+}
+
+.station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.station-photos img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.station-info-panel {
+    max-width: 1100px;
+    margin: 40px auto 60px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.25);
+    padding: 40px;
+    position: relative;
+}
+
+.station-info-panel.hidden {
+    display: none !important;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 36px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #e74c3c;
+}
+
+#station-title {
+    font-size: 2.4rem;
+    color: #1e4a8c;
+    margin-bottom: 20px;
+}
+
+.station-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #334c70;
+    margin-bottom: 30px;
+}
+
+.station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.station-photos img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.map-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    background: white;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.18);
+}
+
+.station-info-panel {
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(100, 170, 255, 0.25);
+    padding: 40px;
+    position: relative;
+}
+
+.station-info-panel.hidden {
+    display: none !important;
+}
+
+/* ====================== КАРТА ВЕСТИБЮЛЕЙ ====================== */
+.map-section {
+    padding: 70px 5% 90px;
+    background: rgba(240, 248, 255, 0.65);
+    text-align: center;
+}
+
+.map-section h2 {
+    font-size: 2.3rem;
+    color: #1e4a8c;
+    margin-bottom: 10px;
+}
+
+.map-subtitle {
+    font-size: 1.18rem;
+    color: #2b7bc9;
+    max-width: 720px;
+    margin: 0 auto 40px;
+}
+
+/* Стили для модального окна с графиком */
+#schedule-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-hidden { display: none !important; }
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+#close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #999;
+}
+
+/* Стили самого графика D3 */
+.bar-label { font-size: 12px; fill: #333; }
+.axis-label { font-size: 14px; font-weight: bold; }
+.grid line { stroke: #e0e0e0; stroke-opacity: 0.7; }
+
+/* Всплывающее окошко */
+.d3-tooltip {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    pointer-events: none;
+    font-size: 13px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    z-index: 2000;
+}
+
+/* Точки на графике */
+.dot { transition: r 0.2s; cursor: pointer; }
+.dot:hover { r: 8; }
+
+/* Линия графика */
+.line-path {
+    fill: none;
+    stroke-width: 3;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash 3s linear forwards;
+}
+
+@keyframes dash { to { stroke-dashoffset: 0; } }
+
+.station-point.highlight-line1 { fill: #ff4757 !important; stroke: #c0392b !important; stroke-width: 10; }
+.station-point.highlight-line2 { fill: #5dade2 !important; stroke: #2874a6 !important; stroke-width: 9; }
+.station-point.highlight-line3 { fill: #58d68d !important; stroke: #1e8449 !important; stroke-width: 9; }
+.station-point.highlight-line4 { fill: #ff9f1c !important; stroke: #e67e22 !important; stroke-width: 10; }
+.station-point.highlight-line5 { fill: #bb8fce !important; stroke: #6c3483 !important; stroke-width: 9; }
+.station-point.highlight-line6 { fill: #ff9f43 !important; stroke: #d35400 !important; stroke-width: 9; }
+
+.station-point.highlight {
+    fill: #ff0000 !important; /* Яркий цвет для теста, потом замени на нужный */
+    stroke: #ffffff !important;
+    stroke-width: 4px !important;
+    r: 10px !important;
+}
+
+.station-name-text {
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.time-label {
+    font-size: 11px;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 2px;
+}
+
+/* Эффект при наведении на лепесток */
+.label-group:hover .station-name-text {
+    fill: #007bff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Делаем модальное окно шире */
+.modal-content {
+    width: 95% !important; /* Занимает 95% ширины экрана */
+    max-width: 1600px;     /* Но не более 1600px */
+    height: 85vh;          /* 85% высоты экрана */
+    margin: 2vh auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Контейнер для графика внутри модалки */
+#d3-chart-container {
+    flex-grow: 1;
+    width: 100%;
+    overflow-x: auto; /* Если экран узкий, появится прокрутка, а не наложение */
+    overflow-y: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-title {
+    font-size: 22px;
+    font-weight: bold;
+    fill: #1e3a5f;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ====================== ПРОФИЛЬ ГЛУБИНЫ ====================== */
+.depth-section {
+    padding: 60px 5% 70px;
+    background: rgba(240, 248, 255, 0.65);
+    text-align: center;
+}
+.depth-section h2 { font-size: 2.2rem; color: #1e4a8c; margin-bottom: 10px; }
+.depth-subtitle { font-size: 1.1rem; color: #2b7bc9; max-width: 720px; margin: 0 auto 30px; }
+
+.depth-legend {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 25px;
+}
+.depth-legend-item {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.85);
+    transition: all 0.2s; user-select: none;
+}
+.depth-legend-item:hover { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.depth-legend-item.active { background: #2b7bc9; color: #fff; }
+.depth-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); }
+
+.depth-chart-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px; box-shadow: 0 15px 50px rgba(100, 170, 255, 0.25);
+    padding: 20px; max-width: 1400px; margin: 0 auto; overflow-x: auto;
+}
+#depth-chart svg { display: block; margin: 0 auto; }
+
+.ground-line { stroke: #5a8f5a; stroke-width: 3; stroke-dasharray: 12, 6; }
+.ground-label { font-size: 14px; fill: #5a8f5a; font-weight: 600; }
+.depth-bar { transition: opacity 0.2s; cursor: pointer; }
+.depth-bar:hover { opacity: 0.85; }
+
+.depth-tooltip {
+    position: fixed; background: rgba(255, 255, 255, 0.98);
+    border: 2px solid #2b7bc9; border-radius: 12px; padding: 12px 16px;
+    pointer-events: none; font-size: 13px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    z-index: 9999; opacity: 0; transition: opacity 0.2s;
+}
+.depth-tooltip.visible { opacity: 1; }
+.depth-tooltip .tt-name { font-weight: 700; font-size: 15px; color: #1e4a8c; margin-bottom: 4px; }
+.depth-tooltip .tt-depth { color: #e74c3c; font-weight: 600; }
+.depth-tooltip .tt-line { font-size: 12px; color: #666; }
+
+/* ====================== НОВЫЙ ТАЙМЛАЙН ====================== */
+.timeline-section {
+  padding: 80px 5% 100px;
+  background: linear-gradient(180deg, rgba(240,248,255,0.7) 0%, rgba(220,235,255,0.5) 100%);
+  text-align: center;
+}
+
+.timeline-section h2 {
+  font-size: 2.4rem;
+  color: #1e4a8c;
+  margin-bottom: 12px;
+}
+
+.timeline-subtitle {
+  font-size: 1.15rem;
+  color: #2b7bc9;
+  max-width: 700px;
+  margin: 0 auto 50px;
+}
+
+/* Контейнер */
+.tl-container {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* Центральная линия + прогресс */
+.tl-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: rgba(43, 123, 201, 0.15);
+  border-radius: 3px;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.tl-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #2b7bc9, #4a9be0, #81b9ff);
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(43, 123, 201, 0.6);
+  transition: height 0.3s ease-out;
+}
+
+/* Карточки */
+.tl-item {
+  position: relative;
+  width: 50%;
+  padding: 0 40px 60px;
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 2;
+}
+
+.tl-item.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.tl-item:nth-child(odd) { left: 0; text-align: right; }
+.tl-item:nth-child(even) { left: 50%; text-align: left; }
+
+.tl-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(100, 170, 255, 0.18);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.tl-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(100, 170, 255, 0.3);
+}
+
+/* Изображение */
+.tl-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tl-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.tl-card:hover .tl-image img {
+  transform: scale(1.08);
+}
+
+.tl-year {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(30, 74, 140, 0.85);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Контент */
+.tl-content h3 {
+  font-size: 1.3rem;
+  color: #1e3a5f;
+  margin: 0 0 10px;
+}
+
+.tl-content p {
+  font-size: 1rem;
+  color: #334c70;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .tl-track { left: 30px; }
+  .tl-item { width: 100%; left: 0 !important; padding: 0 20px 40px 70px; text-align: left !important; }
+  .tl-card { padding: 16px; }
+  .tl-image { height: 150px; }
+}
+
+/* ====================== ТАЙМЛАЙН-ПОЕЗД ====================== */
+.timeline-section {
+  padding: 60px 0 80px;
+  background: rgba(240, 248, 255, 0.65);
+  text-align: center;
+  overflow: hidden;
+}
+
+.timeline-section h2 {
+  font-size: 2.2rem;
+  color: #1e4a8c;
+  margin-bottom: 8px;
+}
+
+.timeline-subtitle {
+  font-size: 1.1rem;
+  color: #2b7bc9;
+  margin-bottom: 40px;
+}
+
+/* Обёртка с горизонтальным скроллом */
+.tl-scroll-wrapper {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 30px 5% 50px;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: #81b9ff rgba(255,255,255,0.3);
+}
+
+.tl-scroll-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.tl-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.3);
+  border-radius: 4px;
+  margin: 0 5%;
+}
+.tl-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #81b9ff, #4a9be0);
+  border-radius: 4px;
+}
+
+/* Рельсы на фоне */
+.tl-track-bg {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 50%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #8a9aa8 0px, #8a9aa8 20px,
+    transparent 20px, transparent 30px
+  );
+  border-radius: 3px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Контейнер вагонов */
+.tl-wagons-container {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== ВАГОН ===== */
+.tl-wagon {
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+  position: relative;
+  animation: wagonSlideIn 0.6s ease-out both;
+}
+
+.tl-wagon:nth-child(1) { animation-delay: 0.1s; }
+.tl-wagon:nth-child(2) { animation-delay: 0.2s; }
+.tl-wagon:nth-child(3) { animation-delay: 0.3s; }
+.tl-wagon:nth-child(4) { animation-delay: 0.4s; }
+.tl-wagon:nth-child(5) { animation-delay: 0.5s; }
+.tl-wagon:nth-child(6) { animation-delay: 0.6s; }
+.tl-wagon:nth-child(7) { animation-delay: 0.7s; }
+.tl-wagon:nth-child(8) { animation-delay: 0.8s; }
+.tl-wagon:nth-child(9) { animation-delay: 0.9s; }
+
+@keyframes wagonSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Год сверху */
+.wagon-top {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1e4a8c, #2b7bc9);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(43, 123, 201, 0.4);
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* Корпус вагона */
+.wagon-body {
+  position: relative;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px 16px 6px 6px;
+  box-shadow: 0 8px 30px rgba(100, 170, 255, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid rgba(129, 185, 255, 0.3);
+}
+
+.wagon-body:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(100, 170, 255, 0.35);
+}
+
+/* Цветная полоса линии */
+.wagon-stripe {
+  height: 8px;
+  width: 100%;
+}
+
+.tl-wagon[data-line="1"] .wagon-stripe { background: linear-gradient(90deg, #ED1B24, #ff6b6b); }
+.tl-wagon[data-line="2"] .wagon-stripe { background: linear-gradient(90deg, #0072C6, #5dade2); }
+.tl-wagon[data-line="3"] .wagon-stripe { background: linear-gradient(90deg, #00A650, #58d68d); }
+.tl-wagon[data-line="4"] .wagon-stripe { background: linear-gradient(90deg, #F07E24, #ff9f1c); }
+.tl-wagon[data-line="5"] .wagon-stripe { background: linear-gradient(90deg, #702C8F, #bb8fce); }
+.tl-wagon[data-line="6"] .wagon-stripe { background: linear-gradient(90deg, #794E24, #b87333); }
+
+/* Окна */
+.wagon-windows {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 14px 18px 8px;
+}
+
+.w-win {
+  width: 60px;
+  height: 36px;
+  background: linear-gradient(180deg, #a0c8e8 0%, #d0e8f7 100%);
+  border-radius: 6px 6px 2px 2px;
+  border: 2px solid rgba(129, 185, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.w-win::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 20px;
+  height: 8px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 4px;
+  transform: rotate(-15deg);
+}
+
+/* Контент внутри вагона */
+.wagon-content {
+  padding: 10px 18px 16px;
+}
+
+.wagon-content h3 {
+  font-size: 1.1rem;
+  color: #1e4a8c;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.wagon-content p {
+  font-size: 0.92rem;
+  color: #334c70;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Колёса */
+.wagon-wheels {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0 40px;
+  margin-top: -6px;
+}
+
+.w-wheel {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle, #555 30%, #333 60%, #222 100%);
+  border-radius: 50%;
+  border: 3px solid #666;
+  position: relative;
+}
+
+.w-wheel::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: #999;
+  border-radius: 50%;
+}
+
+/* Сцепка между вагонами */
+.wagon-connector {
+  width: 20px;
+  height: 12px;
+  background: linear-gradient(90deg, #8a9aa8, #b0bec5, #8a9aa8);
+  border-radius: 3px;
+  align-self: center;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.wagon-connector::before,
+.wagon-connector::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #666;
+  border-radius: 50%;
+}
+
+.wagon-connector::before { left: 2px; }
+.wagon-connector::after { right: 2px; }
+
+/* Подсказка «листай» */
+.tl-scroll-wrapper::after {
+  content: '→';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: #2b7bc9;
+  opacity: 0.6;
+  animation: arrowPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.3; transform: translateY(-50%) translateX(0); }
+  50% { opacity: 0.8; transform: translateY(-50%) translateX(8px); }
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .wagon-body {
+    width: 240px;
+  }
+  .wagon-content h3 {
+    font-size: 1rem;
+  }
+  .wagon-content p {
+    font-size: 0.85rem;
+  }
+  .wagon-top {
+    font-size: 1rem;
+    padding: 4px 12px;
+  }
+  .tl-scroll-wrapper {
+    padding: 30px 2% 40px;
+  }
+}
+
+/* Фон с изображением для вагонов */
+.wagon-body {
+  position: relative;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px 16px 6px 6px;
+  box-shadow: 0 8px 30px rgba(100, 170, 255, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid rgba(129, 185, 255, 0.3);
+  
+  /* Добавляем фоновое изображение */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Затемнение фона для читаемости текста */
+.wagon-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.wagon-body:hover::before {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Контент поверх фона */
+.wagon-stripe,
+.wagon-windows,
+.wagon-content,
+.wagon-wheels {
+  position: relative;
+  z-index: 2;
+}
+
+/* Индивидуальные фоны для каждого вагона */
+.tl-wagon[data-year="1955"] .wagon-body {
+  background-image: url('https://pastvu.com/_p/a/o/e/8/oe8d3slvt12bl900fg.jpg');
+}
+
+.tl-wagon[data-year="1961"] .wagon-body {
+  background-image: url('https://metro.vpeterburge.ru/data/stations/line2/mosvorota/mosvor17.jpg');
+}
+
+.tl-wagon[data-year="1967"] .wagon-body {
+  background-image: url('https://metro.vpeterburge.ru/data/stations/line3/vas/vas12.jpg');
+}
+
+.tl-wagon[data-year="1975"] .wagon-body {
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Politechnicheskaya_Petersburg_metrostation.jpg/1280px-Politechnicheskaya_Petersburg_metrostation.jpg');
+}
+
+.tl-wagon[data-year="1985"] .wagon-body {
+  background-image: url('https://metro.vpeterburge.ru/data/stations/line4/red_guard/novochera_8.jpg');
+}
+
+
+.tl-wagon[data-year="2008"] .wagon-body,
+.tl-wagon[data-year="2005"] .wagon-body {
+  background-image: url('https://avatars.mds.yandex.net/i?id=1ad13e9088a9a1d026aab002462f85b8_sr-5232111-images-thumbs&n=13');
+}
+
+.tl-wagon[data-year="2011"] .wagon-body {
+  background-image: url('https://cdn.tvspb.ru/storage/wp-content/uploads/2023/09/admiraltejskaya-11-scaled.jpg__0_0x0.jpg');
+}
+
+.tl-wagon[data-year="2019"] .wagon-body{
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Metro_SPB_Line5_Shushary_%28img5%29.jpg/960px-Metro_SPB_Line5_Shushary_%28img5%29.jpg');
+}
+
+.tl-wagon[data-year="2026"] .wagon-body{
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Вид_на_лестницу_к_пересадочному_узлу.jpg/960px-Вид_на_лестницу_к_пересадочному_узлу.jpg');
+}
+
+/* ====================== ПОЛЗУНОК ИСТОРИИ ====================== */
+.history-slider-wrapper {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px 18px 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(100, 170, 255, 0.25);
+    border: 1px solid rgba(100, 180, 255, 0.3);
+    min-width: 280px;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.slider-labels span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.slider-year {
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    color: #2b7bc9 !important;
+    background: rgba(43, 123, 201, 0.1);
+    padding: 2px 12px;
+    border-radius: 8px;
+}
+
+/* Стилизация ползунка */
+.history-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #81b9ff, #2b7bc9);
+    outline: none;
+    cursor: pointer;
+}
+
+.history-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #2b7bc9;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(43, 123, 201, 0.4);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.history-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(43, 123, 201, 0.6);
+}
+
+.history-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #2b7bc9;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(43, 123, 201, 0.4);
+    cursor: pointer;
+}
+
+/* Метки-события под ползунком */
+.slider-milestones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 2px;
+}
+
+.milestone {
+    font-size: 0.75rem;
+    color: #999;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.milestone:hover,
+.milestone.active {
+    color: #2b7bc9;
+    font-weight: 700;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+    .history-slider-wrapper {
+        min-width: 220px;
+        padding: 10px 14px 14px;
+    }
+    .slider-milestones {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+}
+
+.bubble-section {
+    padding: 60px 5% 70px;
+    background: rgba(240, 248, 255, 0.65);
+    text-align: center;
+}
+
+.bubble-section h2 {
+    font-size: 2.2rem;
+    color: #1e4a8c;
+    margin-bottom: 10px;
+}
+
+.bubble-subtitle {
+    font-size: 1.1rem;
+    color: #2b7bc9;
+    max-width: 720px;
+    margin: 0 auto 30px;
+}
+
+#packed-circles-chart {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.bubble-tooltip {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10000;
+    font-size: 13px;
+}
+
+/* Контейнер для всех карточек */
+.station-info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Расстояние между карточками */
+}
+
+/* Стиль одной карточки станции */
+.info-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(100, 170, 255, 0.15);
+    padding: 25px;
+    position: relative;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Внутренние элементы карточки */
+.info-card .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+}
+.info-card .close-btn:hover { color: #e74c3c; }
+
+.info-card h2 {
+    font-size: 2rem;
+    color: #1e4a8c;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #81b9ff;
+}
+
+.info-card .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #334c70;
+    margin-bottom: 20px;
+}
+
+.info-card .station-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.info-card .station-photos img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}

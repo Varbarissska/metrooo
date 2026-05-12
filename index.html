@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История метро. Санкт-Петербург</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">Петербургский метрополитен</div>
+        </div>
+    </header>
+
+    <!-- Счётчик развития -->
+    <div class="station-counter">
+        <span class="counter-label">На</span>
+        <span id="counter-year" class="counter-year">2026</span>
+        <span class="counter-label">год открыто:</span>
+        <span id="counter-number" class="counter-number">72</span>
+        <span class="counter-label">станций</span>
+    </div>
+
+            <main>
+        <div class="map-container">
+            <!-- Переключатель лет -->
+            <div class="history-slider-wrapper">
+    <div class="slider-labels">
+        <span>1955</span>
+        <span id="current-year-display" class="slider-year">2026</span>
+        <span>2026</span>
+    </div>
+    <input 
+        type="range" 
+        id="year-slider" 
+        class="history-slider" 
+        min="1955" 
+        max="2026" 
+        value="2026" 
+        step="1"
+    >
+    <div class="slider-milestones">
+        <span class="milestone" data-year="1955">1955</span>
+        <span class="milestone" data-year="1961">1961</span>
+        <span class="milestone" data-year="1967">1967</span>
+        <span class="milestone" data-year="1975">1975</span>
+        <span class="milestone" data-year="1985">1985</span>
+        <span class="milestone" data-year="1997">1997</span>
+        <span class="milestone" data-year="2005">2005</span>
+        <span class="milestone" data-year="2011">2011</span>
+        <span class="milestone" data-year="2019">2019</span>
+        <span class="milestone" data-year="2026">2026</span>
+    </div>
+</div>
+
+            <!-- Легенда -->
+            <div class="lines-legend">
+                <div class="legend-title">Линии метро</div>
+                <div class="legend-item" data-line="1"><span class="color-dot" style="background:#e74c3c"></span><span>Линия 1 — Кировско-Выборгская</span></div>
+                <div class="legend-item" data-line="2"><span class="color-dot" style="background:#3498db"></span><span>Линия 2 — Московско-Петроградская</span></div>
+                <div class="legend-item" data-line="3"><span class="color-dot" style="background:#2ecc71"></span><span>Линия 3 — Невско-Василеостровская</span></div>
+                <div class="legend-item" data-line="4"><span class="color-dot" style="background:#f39c12"></span><span>Линия 4 — Правобережная</span></div>
+                <div class="legend-item" data-line="5"><span class="color-dot" style="background:#9b59b6"></span><span>Линия 5 — Фрунзенско-Приморская</span></div>
+                <div class="legend-item" data-line="6"><span class="color-dot" style="background:#e67e22"></span><span>Линия 6 — Красносельско-Калининская</span></div>
+            </div>
+
+            <!-- Карта + станции -->
+            <img src="file (1).svg" alt="Схема метро" class="metro-map">
+            <svg class="stations-overlay" width="100%" height="100%" viewBox="0 0 1824 2638" preserveAspectRatio="xMidYMid meet">
+                <!-- Линия 1 -->
+                <circle id="devyatkino" class="station-point" cx="1198" cy="36" r="25" data-tooltip="Девяткино" />
+                <circle id="grazhdanskiy_prospect" class="station-point" cx="1198" cy="141" r="25" data-tooltip="Гражданский проспект" />
+                <circle id="akademicheskaya" class="station-point" cx="1198" cy="239" r="25" data-tooltip="Академическая" />
+                <circle id="politekhnicheskaya" class="station-point" cx="1198" cy="349" r="25" data-tooltip="Политехническая" />
+                <circle id="ploshchad_muzhestva" class="station-point" cx="1198" cy="433" r="25" data-tooltip="Площадь Мужества" />
+                <circle id="lesnaya" class="station-point" cx="1198" cy="640" r="25" data-tooltip="Лесная" />
+                <circle id="vyborgskaya" class="station-point" cx="1198" cy="760" r="25" data-tooltip="Выборгская" />
+                <circle id="ploshchad_lenina" class="station-point" cx="1198" cy="880" r="25" data-tooltip="Площадь Ленина" />
+                <circle id="chernyshevskaya" class="station-point" cx="1198" cy="1008" r="25" data-tooltip="Чернышевская" />
+                <circle id="ploshchad_vosstaniya_i_mayakovskaya" class="station-point" cx="1198" cy="1167" r="25" data-tooltip="Площадь Восстания / Маяковская" />
+                <circle id="vladimirskaya_i_dostoevskaya" class="station-point" cx="1198" cy="1336" r="25" data-tooltip="Владимирская / Достоевская" />
+                <circle id="pushkinskaya_i_zvenigorodskaya" class="station-point" cx="945" cy="1546" r="25" data-tooltip="Пушкинская / Звенигородская" />
+                <circle id="technologicheskiy_institut_1_i_2" class="station-point" cx="756" cy="1630" r="25" data-tooltip="Технологический институт (1 и 2)" />
+                <circle id="baltiyskaya" class="station-point" cx="428" cy="1786" r="25" data-tooltip="Балтийская" />
+                <circle id="narvskaya" class="station-point" cx="213" cy="1880" r="25" data-tooltip="Нарвская" />
+                <circle id="avtovo" class="station-point" cx="102" cy="2114" r="25" data-tooltip="Автово" />
+                <circle id="leninskiy_prospect" class="station-point" cx="102" cy="2191" r="25" data-tooltip="Ленинский проспект" />
+                <circle id="prospekt_veteranov" class="station-point" cx="102" cy="2287" r="25" data-tooltip="Проспект Ветеранов" />
+
+                <!-- Линия 2 -->
+                <circle id="parnas" class="station-point" cx="756" cy="36" r="25" data-tooltip="Парнас" />
+                <circle id="prospect_prosvescheniya" class="station-point" cx="756" cy="130" r="25" data-tooltip="Проспект Просвещения" />
+                <circle id="ozerki" class="station-point" cx="756" cy="231" r="25" data-tooltip="Озерки" />
+                <circle id="udelnaya" class="station-point" cx="756" cy="329" r="25" data-tooltip="Удельная" />
+                <circle id="pionerskaya" class="station-point" cx="756" cy="437" r="25" data-tooltip="Пионерская" />
+                <circle id="chernaya_rechka" class="station-point" cx="756" cy="538" r="25" data-tooltip="Чёрная речка" />
+                <circle id="petrogradskaya" class="station-point" cx="756" cy="762" r="25" data-tooltip="Петроградская" />
+                <circle id="gorkovskaya" class="station-point" cx="756" cy="950" r="25" data-tooltip="Горьковская" />
+                <circle id="nevskiy_prospect_i_gostiniy_dvor" class="station-point" cx="756" cy="1156" r="25" data-tooltip="Невский проспект / Гостиный двор" />
+                <circle id="spasskaya_sennaya_sadovaya" class="station-point" cx="756" cy="1330" r="25" data-tooltip="Спасская / Сенная площадь / Садовая" />
+                <circle id="frunzenskaya" class="station-point" cx="756" cy="1785" r="25" data-tooltip="Фрунзенская" />
+                <circle id="moskovskiye_vorota" class="station-point" cx="756" cy="1868" r="25" data-tooltip="Московские ворота" />
+                <circle id="electrosila" class="station-point" cx="756" cy="2002" r="25" data-tooltip="Электросила" />
+                <circle id="park_pobedy" class="station-point" cx="756" cy="2103" r="25" data-tooltip="Парк Победы" />
+                <circle id="moskovskaya" class="station-point" cx="756" cy="2201" r="25" data-tooltip="Московская" />
+                <circle id="zvezdnaya" class="station-point" cx="756" cy="2266" r="25" data-tooltip="Звёздная" />
+                <circle id="kupchino" class="station-point" cx="756" cy="2334" r="25" data-tooltip="Купчино" />
+
+                <!-- Линия 3 -->
+                <circle id="begovaya" class="station-point" cx="-14" cy="545" r="25" data-tooltip="Беговая" />
+                <circle id="zenit" class="station-point" cx="-14" cy="718" r="25" data-tooltip="Зенит" />
+                <circle id="primorskaya" class="station-point" cx="-14" cy="962" r="25" data-tooltip="Приморская" />
+                <circle id="vasileostrovskaya" class="station-point" cx="424" cy="1156" r="25" data-tooltip="Василеостровская" />
+                <circle id="ploshchad_aleksandra_nevskogo_1_i_2" class="station-point" cx="1575" cy="1329" r="25" data-tooltip="Площадь Александра Невского (1 и 2)" />
+                <circle id="elizarovskaya" class="station-point" cx="1575" cy="2007" r="25" data-tooltip="Елизаровская" />
+                <circle id="lomonosovskaya" class="station-point" cx="1575" cy="2134" r="25" data-tooltip="Ломоносовская" />
+                <circle id="proletarskaya" class="station-point" cx="1575" cy="2274" r="25" data-tooltip="Пролетарская" />
+                <circle id="obukhovo" class="station-point" cx="1575" cy="2403" r="25" data-tooltip="Обухово" />
+                <circle id="rybatskoye" class="station-point" cx="1575" cy="2537" r="25" data-tooltip="Рыбацкое" />
+
+                <!-- Линия 4 -->
+                <circle id="gorniy_institut" class="station-point" cx="370" cy="1246" r="25" data-tooltip="Горный институт" />
+                <circle id="ligovskiy_prospect" class="station-point" cx="1392" cy="1329" r="25" data-tooltip="Лиговский проспект" />
+                <circle id="novocherkasskaya" class="station-point" cx="1846" cy="1417" r="25" data-tooltip="Новочеркасская" />
+                <circle id="ladozhskaya" class="station-point" cx="1846" cy="1553" r="25" data-tooltip="Ладожская" />
+                <circle id="prospekt_bolshevikov" class="station-point" cx="1846" cy="1840" r="25" data-tooltip="Проспект Большевиков" />
+                <circle id="ulitsa_dybenko" class="station-point" cx="1846" cy="2001" r="25" data-tooltip="Улица Дыбенко" />
+
+                <!-- Линия 5 -->
+                <circle id="komendantskiy_prospect" class="station-point" cx="297" cy="328" r="25" data-tooltip="Комендантский проспект" />
+                <circle id="staraya_derevnya" class="station-point" cx="297" cy="441" r="25" data-tooltip="Старая Деревня" />
+                <circle id="krestovskiy_ostrov" class="station-point" cx="297" cy="729" r="25" data-tooltip="Крестовский остров" />
+                <circle id="chkalovskaya" class="station-point" cx="370" cy="873" r="25" data-tooltip="Чкаловская" />
+                <circle id="sportivnaya" class="station-point" cx="428" cy="942" r="25" data-tooltip="Спортивная" />
+                <circle id="admiralteyskaya" class="station-point" cx="658" cy="1209" r="25" data-tooltip="Адмиралтейская" />
+                <circle id="obvodnyy_kanal" class="station-point" cx="1096" cy="1717" r="25" data-tooltip="Обводный канал" />
+                <circle id="volkovskaya" class="station-point" cx="1187" cy="1834" r="25" data-tooltip="Волковская" />
+                <circle id="bukharestskaya" class="station-point" cx="1231" cy="2001" r="25" data-tooltip="Бухарестская" />
+                <circle id="mezhdunarodnaya" class="station-point" cx="1231" cy="2141" r="25" data-tooltip="Международная" />
+                <circle id="prospekt_slavy" class="station-point" cx="1231" cy="2270" r="25" data-tooltip="Проспект Славы" />
+                <circle id="dunayskaya" class="station-point" cx="1231" cy="2403" r="25" data-tooltip="Дунайская" />
+                <circle id="shushary" class="station-point" cx="1231" cy="2531" r="25" data-tooltip="Шушары" />
+
+                <!-- Линия 6 -->
+                <circle id="kirovskiy_zavod_i_putilovskaya" class="station-point" cx="102" cy="2024" r="25" data-tooltip="Кировский завод / Путиловская" />
+                <circle id="yugo-zapadnaya" class="station-point" cx="-65" cy="2107" r="25" data-tooltip="Юго-Западная" />
+            </svg>
+        </div>
+
+        <!-- Инфо-панель ПОД картой -->
+        <!-- Этот блок будет очищаться и заполняться скриптом -->
+<div id="station-info-container" class="station-info-panel hidden">
+    <!-- Сюда будут добавляться карточки -->
+</div>
+    </main>
+
+    <!-- Timeline -->
+    <!-- Timeline развития метро -->
+<section class="timeline-section" id="timeline-section">
+  <h2>🚇 История Петербургского метрополитена</h2>
+  <p class="timeline-subtitle">Листай вправо, чтобы проехать по времени ↓</p>
+
+  <div class="tl-scroll-wrapper">
+    <div class="tl-track-bg"></div>
+
+    <div class="tl-wagons-container" id="tlWagons">
+
+      <!-- 1955 -->
+      <div class="tl-wagon" data-line="1" data-year="1955">
+        <div class="wagon-top">
+          <span class="wagon-year">1955</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Рождение метро</h3>
+            <p>15 ноября открыты 7 станций от «Автово» до «Площади Восстания». Сталинский ампир, мрамор, бронза.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 1961 -->
+      <div class="tl-wagon" data-line="2" data-year="1961">
+        <div class="wagon-top">
+          <span class="wagon-year">1961</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Синяя линия</h3>
+            <p>Московско-Петроградская линия. Функциональный модернизм, алюминий, строгие формы.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 1967 -->
+      <div class="tl-wagon" data-line="3" data-year="1967">
+        <div class="wagon-top">
+          <span class="wagon-year">1967</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Левый берег</h3>
+            <p>Невско-Василеостровская линия соединила центр с новыми районами. Эскалаторы ЭТ-5М.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 1975 -->
+      <div class="tl-wagon" data-line="1" data-year="1975">
+        <div class="wagon-top">
+          <span class="wagon-year">1975</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Инженерный прорыв</h3>
+            <p>Первые в мире односводчатые станции глубокого заложения — «Политехническая», «Площадь Мужества».</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 1985 -->
+      <div class="tl-wagon" data-line="4" data-year="1985">
+        <div class="wagon-top">
+          <span class="wagon-year">1985</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Оранжевая линия</h3>
+            <p>Правобережная линия. Абстрактные мозаики, металлические кессоны, эксперименты со светом.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 2005-2008 -->
+      <div class="tl-wagon" data-line="5" data-year="2005">
+        <div class="wagon-top">
+          <span class="wagon-year">2005</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Фиолетовая линия</h3>
+            <p>Фрунзенско-Приморская линия. «Комендантский проспект» → «Волковская». Современные технологии.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 2011 -->
+      <div class="tl-wagon" data-line="5" data-year="2011">
+        <div class="wagon-top">
+          <span class="wagon-year">2011</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Рекорд глубины ⭐</h3>
+            <p>Открыта «Адмиралтейская» (86 м) — самая глубокая станция России. 6 лет строительства.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 2019 -->
+      <div class="tl-wagon" data-line="5" data-year="2019">
+        <div class="wagon-top">
+          <span class="wagon-year">2019</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Современность</h3>
+            <p>Продление до «Шушар». Минимализм, LED-навигация, Wi-Fi, безбарьерная среда.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+        <div class="wagon-connector"></div>
+      </div>
+
+      <!-- 2026+ -->
+      <div class="tl-wagon" data-line="6" data-year="2026">
+        <div class="wagon-top">
+          <span class="wagon-year">2026+</span>
+        </div>
+        <div class="wagon-body">
+          <div class="wagon-stripe"></div>
+          <div class="wagon-windows">
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+            <div class="w-win"></div>
+          </div>
+          <div class="wagon-content">
+            <h3>Будущее</h3>
+            <p>Красносельско-Калининская линия. Автоматизация, умные турникеты, экологичные материалы.</p>
+          </div>
+          <div class="wagon-wheels">
+            <div class="w-wheel"></div>
+            <div class="w-wheel"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="depth-section" id="depth-section">
+    <h2>🚇 Профиль глубины станций</h2>
+    <p class="depth-subtitle">Петербургское метро — одно из самых глубоких в мире. Столбцы растут вниз от «уровня земли».</p>
+    
+    <!-- Легенда для фильтрации линий -->
+    <div class="depth-legend" id="depth-legend"></div>
+    
+    <!-- Контейнер для самого графика -->
+    <div class="depth-chart-wrapper">
+        <div id="depth-chart"></div>
+    </div>
+
+    <!-- Тултип (всплывашка при наведении) -->
+    <div class="depth-tooltip" id="depth-tooltip"></div>
+</section>
+
+<section class="bubble-section" id="bubble-section">
+    <h2>📊 Пассажиропоток станций</h2>
+    <p class="bubble-subtitle">Размер круга = количество пассажиров, цвет = линия метро</p>
+    <div id="packed-circles-chart"></div>
+</section>
+
+
+    <!-- === КАРТА ВЕСТИБЮЛЕЙ === -->
+    <section class="map-section">
+        <h2>Адреса вестибюлей станций</h2>
+        <p class="map-subtitle">Интерактивная карта всех станций Петербургского метро</p>
+        
+        <div id="yandex-map" style="width: 100%; height: 680px; border-radius: 16px; box-shadow: 0 15px 40px rgba(100, 170, 255, 0.25);"></div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 Проект по истории Петербургского метрополитена</p>
+            <p>Баскова Варвара, Белова Владислава, Щербаткина Анастасия</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+<div id="schedule-modal" class="modal-hidden">
+    <div class="modal-content" style="width: 96%; max-width: 1180px; height: 92vh; max-height: 920px;">
+        <span id="close-modal">&times;</span>
+        <h2 id="modal-title">График работы линии</h2>
+        <div id="d3-chart-container"></div>
+    </div>
+</div>
+
+
+
+</body>
+</html>
